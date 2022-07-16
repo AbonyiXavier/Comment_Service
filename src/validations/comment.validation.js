@@ -14,13 +14,13 @@ const createCommentValidation = {
 const updateCommentValidation = {
     params: Joi.object().keys({
         id: Joi.required().custom(objectId),
+        userId: Joi.required().custom(objectId),
     }),
     body: Joi.object()
         .keys({
             hashTags: Joi.array().optional(),
             mentions: Joi.array().optional(),
-            text: Joi.string().optional(),
-            userId: Joi.string().required()
+            text: Joi.string().optional()
         })
         .min(1),
 };

@@ -1,6 +1,5 @@
 import CommentModel from "../models/comment.model";
 import axios from "axios"
-import dotenv from "dotenv";
 
 /**
  * This method is responsible for creating comment
@@ -71,7 +70,7 @@ export const GetCommentsByUserId = async (userId, page, limit) => {
 
         page = page < 1 ? 1 : Number(page);
 
-        const count = await CommentModel.countDocuments();
+        const count = await CommentModel.countDocuments({ userId, isDeleted: false });
 
         limit = !limit || isNaN(limit) ? 5 : Number(limit);
 
@@ -112,6 +111,14 @@ async function constructFetchCommentsByUserIdEntity(userId, limit, page, totalPa
         .skip((page - 1) * limit)
         .lean();
 
+    if (userComment.length < 1) {
+        return {
+            status: false,
+            message: 'No comment found',
+            data: null
+        };
+    }
+
     return {
         status: true,
         message: 'Comment fetched successfully',
@@ -119,7 +126,7 @@ async function constructFetchCommentsByUserIdEntity(userId, limit, page, totalPa
         meta: {
             totalPages: totalPages,
             currentPage: page,
-            totalComments: count,
+            totalComments: count
         },
     };
 }
@@ -170,6 +177,171 @@ export const RetrieveRankedListOfHashTagsAndMentions = async () => {
         return {
             status: false,
             message: 'Error retrieving list',
+            data: null
+        };
+    }
+}
+
+/**
+ * This method is responsible for fetching all Comments with Pagination and can Search by hashTags and mentions
+ * @param {*} search 
+ * @param {*} page 
+ * @param {*} limit 
+ * @returns 
+ */
+export const GetCommentsPaginatedAndSearch = async (search, page, limit) => {
+    try {
+        page = !page || isNaN(page) ? 1 : Number(page);
+
+        const searchQueries = {
+
+            $or: [
+                { hashTags: { $regex: search, $options: 'ig' } },
+                { mentions: { $regex: search, $options: 'g' } },
+            ]
+
+        };
+
+        page = page < 1 ? 1 : Number(page);
+
+        limit = !limit || isNaN(limit) ? 5 : Number(limit);
+
+        let query = search ? searchQueries : {};
+
+        const count = await CommentModel.countDocuments(query);
+
+        let totalPages = Math.ceil(count / limit);
+        page = page > totalPages ? totalPages : page;
+
+        return await constructFetchCommentsEntity(query, limit, page, totalPages, count);
+
+    } catch (error) {
+        if (error.name === "MongoServerError" && error.code === 51024) {
+            return {
+                status: false,
+                message: "No comment found",
+                data: null
+            };
+        }
+        return {
+            status: false,
+            message: 'Error fetching comments',
+            data: null
+        };
+    }
+}
+
+/**
+ * A method that construct fetch comments entity
+ * @param {*} query 
+ * @param {*} limit 
+ * @param {*} page 
+ * @param {*} totalPages 
+ * @param {*} count 
+ * @returns 
+ */
+async function constructFetchCommentsEntity(query, limit, page, totalPages, count) {
+    const comment = await CommentModel.find(query)
+        .sort({ createdAt: -1 })
+        .limit(limit * 1)
+        .skip((page - 1) * limit)
+        .lean();
+
+    return {
+        status: true,
+        message: 'Comment fetched successfully',
+        data: comment,
+        meta: {
+            totalPages: totalPages,
+            currentPage: page,
+            totalComments: count
+        },
+    };
+}
+
+/**
+ * This method is responsible for updating comment by user
+ * @param {*} id 
+ * @param {*} hashTags 
+ * @param {*} mentions 
+ * @param {*} text 
+ * @param {*} userId 
+ * @returns 
+ */
+export const updateComment = async (id, hashTags, mentions, text, userId) => {
+    try {
+        const comment = await CommentModel.findOneAndUpdate(
+            {
+                _id: id,
+                userId: userId,
+                isDeleted: false
+            },
+            {
+                $set: {
+                    hashTags: hashTags,
+                    mentions: mentions,
+                    text: text,
+                    updatedBy: userId
+                }
+            },
+            {
+                new: true,
+                upsert: true
+            }
+        );
+
+        return {
+            status: true,
+            message: 'Comment updated successfully',
+            data: comment
+        };
+
+    } catch (error) {
+        return {
+            status: false,
+            message: 'Error updating comment',
+            data: null
+        };
+    }
+}
+
+/**
+ * This method is responsible for soft delete of comments by user
+ * @param {*} id 
+ * @param {*} userId 
+ * @returns 
+ */
+export const softDeleteComment = async (id, userId) => {
+    try {
+        const comment = await CommentModel.findOneAndUpdate(
+            {
+                _id: id,
+                userId: userId,
+                isDeleted: false
+            },
+            {
+                $set: {
+                    isDeleted: true,
+                    deletedBy: userId,
+                    deletedAt: new Date()
+                }
+            },
+            {
+                new: true,
+                upsert: true
+            }
+        );
+
+        return {
+            status: true,
+            message: "Comment deleted successfully!",
+            data: comment
+        };
+
+    } catch (error) {
+        return {
+            status: false,
+            message: 'Error deleteing comment',
             data: null
         };
     }

@@ -21,7 +21,15 @@ app.use("/api", router);
 
 app.get("/", (req, res) => {
   res.status(200).json({
+    status: true,
     message: "Welcome to comment service",
+  });
+});
+
+app.all('*', (req, res) => {
+  res.status(404).json({
+    status: false,
+    message: 'resource not found',
   });
 });
 
