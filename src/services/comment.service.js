@@ -1,5 +1,6 @@
 import CommentModel from "../models/comment.model";
 import axios from "axios"
+import logger from "../config/logger";
 
 /**
  * This method is responsible for creating comment
@@ -36,6 +37,8 @@ export const CreateComment = async ({ hashTags, mentions, text, userId }) => {
         };
 
     } catch (error) {
+        logger.error("CreateComment failed", error);
+
         return {
             status: false,
             message: 'Error creating comment',
@@ -58,6 +61,8 @@ async function validateUserId(userId) {
         }
 
     } catch (error) {
+        logger.error("validateUserId failed", error);
+
         return error;
     }
 }
@@ -80,6 +85,8 @@ export const GetCommentsByUserId = async (userId, page, limit) => {
         return await constructFetchCommentsByUserIdEntity(userId, limit, page, totalPages, count);
 
     } catch (error) {
+        logger.error("GetCommentsByUserId failed", error);
+
         if (error.name === "MongoServerError" && error.code === 51024) {
             return {
                 status: false,
@@ -174,6 +181,8 @@ export const RetrieveRankedListOfHashTagsAndMentions = async () => {
         };
 
     } catch (error) {
+        logger.error("RetrieveRankedListOfHashTagsAndMentions failed", error);
+
         return {
             status: false,
             message: 'Error retrieving list',
@@ -216,6 +225,8 @@ export const GetCommentsPaginatedAndSearch = async (search, page, limit) => {
         return await constructFetchCommentsEntity(query, limit, page, totalPages, count);
 
     } catch (error) {
+        logger.error("GetCommentsPaginatedAndSearch failed", error);
+
         if (error.name === "MongoServerError" && error.code === 51024) {
             return {
                 status: false,
@@ -297,6 +308,8 @@ export const updateComment = async (id, hashTags, mentions, text, userId) => {
         };
 
     } catch (error) {
+        logger.error("updateComment failed", error);
+
         return {
             status: false,
             message: 'Error updating comment',
@@ -339,6 +352,8 @@ export const softDeleteComment = async (id, userId) => {
         };
 
     } catch (error) {
+        logger.error("softDeleteComment failed", error);
+        
         return {
             status: false,
             message: 'Error deleteing comment',
