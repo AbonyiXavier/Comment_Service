@@ -54,7 +54,7 @@ export const CreateComment = async ({ hashTags, mentions, text, userId }) => {
  */
 async function validateUserId(userId) {
     try {
-        const user = await axios.get(`${process.env.USERBASE_URL}/user/get/${userId}`);
+        const user = await axios.get(`${process.env.USER_SERVICE_BASE_URL}/user/get/${userId}`);
 
         if (user && user.status === 200 && user.data.data._id === userId) {
             return user;
@@ -353,7 +353,7 @@ export const softDeleteComment = async (id, userId) => {
 
     } catch (error) {
         logger.error("softDeleteComment failed", error);
-        
+
         return {
             status: false,
             message: 'Error deleteing comment',

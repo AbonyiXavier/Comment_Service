@@ -9,7 +9,7 @@ const envVarsSchema = Joi.object()
     NODE_ENV: Joi.string().valid('production', 'development', 'staging').required(),
     PORT: Joi.number().positive().required(),
     MONGODB_URI: Joi.string().required().description('Mongo DB url'),
-    USERBASE_URL: Joi.string().required().description('User Base_url'),
+    USER_SERVICE_BASE_URL: Joi.string().required().description('User service base url'),
   })
   .unknown();
 
@@ -23,5 +23,5 @@ export default {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   mongodb: envVars.MONGODB_URI,
-  userBaseUrl: envVars.USERBASE_URL
+  userServiceBaseUrl: envVars.USER_SERVICE_BASE_URL
 }
