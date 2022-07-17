@@ -54,7 +54,7 @@ export const CreateComment = async ({ hashTags, mentions, text, userId }) => {
  */
 async function validateUserId(userId) {
     try {
-        const user = await axios.get(`${process.env.USER_SERVICE_BASE_URL}/user/get/${userId}`);
+        const user = await axios.get(`${process.env.USER_SERVICE_BASE_URL}/get/${userId}`);
 
         if (user && user.status === 200 && user.data.data._id === userId) {
             return user;
