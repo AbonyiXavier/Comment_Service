@@ -12,6 +12,7 @@ The service allows CRUD operations and the retrieval of basic statistical data
 
 # Getting Started
 To obtain the postman documentation [url](https://documenter.getpostman.com/view/7775892/UzQvsjmM)
+
 To obtain a copy of this app download or clone the repository at this [url](https://github.com/AbonyiXavier/Comment_Service)
 
 # Prerequisites
