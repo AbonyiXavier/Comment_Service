@@ -74,7 +74,7 @@ export const fetchCommentByUserIdHandler = async (
 
     if (error.name === "MongoServerError" && error.code === 51024) {
       return res.status(STATUS_CODES.NOT_FOUND).send({
-        status: false,
+        status: statusError,
         message: "Inavlid userId",
         data: null,
       });
@@ -129,7 +129,7 @@ export const fetchCommentsHandler = async (req: Request, res: Response) => {
 
     if (error.name === "MongoServerError" && error.code === 51024) {
       return res.status(STATUS_CODES.NOT_FOUND).send({
-        status: false,
+        status: statusError,
         message: "No comment found",
         data: null,
       });
