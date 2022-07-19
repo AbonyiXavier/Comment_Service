@@ -1,7 +1,7 @@
 import axios from "axios";
 
-import commentModel from "../../models/comment.model";
-import logger from "../../config/logger";
+import commentModel from "../models/comment.model";
+import logger from "../config/logger";
 import {
   createCommentConfig,
   deleteCommentConfig,

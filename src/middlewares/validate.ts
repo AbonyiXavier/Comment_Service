@@ -1,7 +1,8 @@
 import Joi from "joi";
 import { NextFunction, Request, Response } from "express";
+import { Modifiers } from "../common/utils";
 
-import pick from "../common/utils/pick";
+const { pick } = Modifiers;
 
 const validate =
   (schema: any) => (req: Request, res: Response, next: NextFunction) => {
