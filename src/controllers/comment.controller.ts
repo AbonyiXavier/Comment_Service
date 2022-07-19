@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
 
-import { statusError, statusSuccess } from "../common/constant/constant";
-import { STATUS_CODES } from "../common/utils/statusCodes";
+import { statusError, statusSuccess } from "../common/constant";
 import {
   createComment,
   getCommentsByUserId,
@@ -9,14 +9,14 @@ import {
   retrieveRankedListOfHashTagsAndMentions,
   softDeleteComment,
   updateComment,
-} from "../services/comment-service/comment.service";
+} from "../services/comment.service";
 import {
   createCommentConfig,
   deleteCommentConfig,
   getCommentsByUserIdConfig,
   pageDtoConfig,
   updateCommentConfig,
-} from "../services/comment-service/types";
+} from "../services/types";
 
 export const createCommentHandler = async (req: Request, res: Response) => {
     
@@ -27,7 +27,7 @@ export const createCommentHandler = async (req: Request, res: Response) => {
   try {
     const comment = await createComment(payload);
 
-    return res.status(STATUS_CODES.CREATED).send({
+    return res.status(StatusCodes.CREATED).send({
       status: statusSuccess,
       message: "Comment created successfully",
       data: comment,
@@ -36,14 +36,14 @@ export const createCommentHandler = async (req: Request, res: Response) => {
   } catch (error: any) {
 
     if (error.status === statusError) {
-      return res.status(STATUS_CODES.NOT_FOUND).send({
+      return res.status(StatusCodes.NOT_FOUND).send({
         status: statusError,
         message: "Invalid userId",
         data: null,
       });
     }
 
-    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send({
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
       status: statusError,
       message: "Error creating comment",
       data: null,
@@ -64,7 +64,7 @@ export const fetchCommentByUserIdHandler = async (
   try {
     const comments = await getCommentsByUserId(query);
 
-    return res.status(STATUS_CODES.OK).send({
+    return res.status(StatusCodes.OK).send({
       status: statusSuccess,
       message: "Comments fetched successfully",
       data: comments,
@@ -73,14 +73,14 @@ export const fetchCommentByUserIdHandler = async (
   } catch (error: any) {
 
     if (error.name === "MongoServerError" && error.code === 51024) {
-      return res.status(STATUS_CODES.NOT_FOUND).send({
+      return res.status(StatusCodes.NOT_FOUND).send({
         status: statusError,
         message: "Inavlid userId",
         data: null,
       });
     }
 
-    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send({
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
       status: statusError,
       message: "Error fetching comments",
       data: null,
@@ -95,7 +95,7 @@ export const retrieveRankedListOfHashTagsAndMentionsHandler = async (
   try {
     const comment = await retrieveRankedListOfHashTagsAndMentions();
 
-    return res.status(STATUS_CODES.OK).send({
+    return res.status(StatusCodes.OK).send({
       status: statusSuccess,
       message: "Comments fetched successfully",
       data: comment,
@@ -103,7 +103,7 @@ export const retrieveRankedListOfHashTagsAndMentionsHandler = async (
 
   } catch (error: any) {
 
-    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send({
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
       status: statusError,
       message: "Error fetching comments",
       data: null,
@@ -119,7 +119,7 @@ export const fetchCommentsHandler = async (req: Request, res: Response) => {
   try {
     const comments = await getCommentsPaginatedAndSearch(query);
 
-    return res.status(STATUS_CODES.OK).send({
+    return res.status(StatusCodes.OK).send({
       status: statusSuccess,
       message: "Comments fetched successfully",
       data: comments,
@@ -128,14 +128,14 @@ export const fetchCommentsHandler = async (req: Request, res: Response) => {
   } catch (error: any) {
 
     if (error.name === "MongoServerError" && error.code === 51024) {
-      return res.status(STATUS_CODES.NOT_FOUND).send({
+      return res.status(StatusCodes.NOT_FOUND).send({
         status: statusError,
         message: "No comment found",
         data: null,
       });
     }
 
-    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send({
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
       status: statusError,
       message: "Error fetching comments",
       data: null,
@@ -159,14 +159,14 @@ export const updateCommentHandler = async (req: Request, res: Response) => {
   try {
     const comment = await updateComment(payload);
 
-    return res.status(STATUS_CODES.OK).send({
+    return res.status(StatusCodes.OK).send({
       status: statusSuccess,
       message: "Comments updated successfully",
       data: comment,
     });
 
   } catch (error: any) {
-    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send({
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
       status: statusError,
       message: "Error updating comment",
       data: null,
@@ -182,14 +182,14 @@ export const softDeleteCommentHandler = async (req: Request, res: Response) => {
   try {
     const comment = await softDeleteComment(query);
 
-    return res.status(STATUS_CODES.OK).send({
+    return res.status(StatusCodes.OK).send({
       status: statusSuccess,
       message: "Comment deleted successfully",
       data: comment,
     });
 
   } catch (error: any) {
-    return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send({
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
       status: statusError,
       message: "Error deleteing comment",
       data: null,
