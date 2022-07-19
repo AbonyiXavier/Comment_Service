@@ -1,6 +1,8 @@
-const dotenv = require('dotenv');
-const path = require('path');
-const Joi = require('joi');
+import dotenv from "dotenv";
+import path from 'path';
+import Joi from 'joi';
+
+dotenv.config();
 
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
@@ -9,7 +11,6 @@ const envVarsSchema = Joi.object()
     NODE_ENV: Joi.string().valid('production', 'development', 'staging').required(),
     PORT: Joi.number().positive().required(),
     MONGODB_URI: Joi.string().required().description('Mongo DB url'),
-    USER_SERVICE_BASE_URL: Joi.string().required().description('User service base url'),
   })
   .unknown();
 
@@ -20,8 +21,7 @@ if (error) {
 }
 
 export default {
-  env: envVars.NODE_ENV,
-  port: envVars.PORT,
-  mongodb: envVars.MONGODB_URI,
-  userServiceBaseUrl: envVars.USER_SERVICE_BASE_URL
+  NODE_ENV: envVars.NODE_ENV,
+  PORT: envVars.PORT,
+  mongodb: envVars.MONGODB_URI
 }
