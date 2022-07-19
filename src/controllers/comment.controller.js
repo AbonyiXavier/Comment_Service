@@ -1,8 +1,8 @@
 import {
-    CreateComment,
-    GetCommentsByUserId,
-    RetrieveRankedListOfHashTagsAndMentions,
-    GetCommentsPaginatedAndSearch,
+    createComment,
+    getCommentsByUserId,
+    retrieveRankedListOfHashTagsAndMentions,
+    getCommentsPaginatedAndSearch,
     updateComment,
     softDeleteComment
 } from "../services/comment.service";
@@ -12,7 +12,7 @@ import catchAsync from "../utils/catchAsync";
 export const createCommentHandler = catchAsync(async (req, res) => {
 
     const { hashTags, mentions, text, userId } = req.body;
-    const { status, message, data } = await CreateComment({ hashTags, mentions, text, userId });
+    const { status, message, data } = await createComment({ hashTags, mentions, text, userId });
 
     if (!status) {
         return badRequestResponse({ res, message, data })
@@ -28,7 +28,7 @@ export const fetchCommentByUserIdHandler = catchAsync(async (req, res) => {
 
     const { page, limit } = req.query;
 
-    const { status, message, data, meta } = await GetCommentsByUserId(userId, page, limit);
+    const { status, message, data, meta } = await getCommentsByUserId(userId, page, limit);
 
     if (!status) {
         return notFoundResponse({ res, message, data })
@@ -41,17 +41,17 @@ export const fetchCommentByUserIdHandler = catchAsync(async (req, res) => {
 export const retrieveRankedListOfHashTagsAndMentionsHandler = catchAsync(async (req, res) => {
 
 
-    const { message, data, meta } = await RetrieveRankedListOfHashTagsAndMentions();
+    const { message, data, meta } = await retrieveRankedListOfHashTagsAndMentions();
 
     return successfulResponse({ res, message, data, meta });
 
 })
 
-export const FetchCommentsHandler = catchAsync(async (req, res) => {
+export const fetchCommentsHandler = catchAsync(async (req, res) => {
 
     const { search, page, limit } = req.query;
 
-    const { status, message, data, meta } = await GetCommentsPaginatedAndSearch(search, page, limit);
+    const { status, message, data, meta } = await getCommentsPaginatedAndSearch(search, page, limit);
 
     if (!status) {
         return badRequestResponse({ res, message, data })
