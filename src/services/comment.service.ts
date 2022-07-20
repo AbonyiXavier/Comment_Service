@@ -206,8 +206,7 @@ export const updateComment = async (props: updateCommentConfig) => {
         },
       },
       {
-        new: true,
-        upsert: true,
+        new: true
       }
     );
 
@@ -237,8 +236,7 @@ export const softDeleteComment = async (props: deleteCommentConfig) => {
         },
       },
       {
-        new: true,
-        upsert: true,
+        new: true
       }
     );
 
